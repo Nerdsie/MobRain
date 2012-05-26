@@ -54,6 +54,9 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 		
 		Player player = (Player) sender;
 
+		if(!player.isOp())
+			return false;
+		
 		if(cmd.getName().equalsIgnoreCase("drops")){
 			try{
 				int rad = Integer.parseInt(args[0]);
