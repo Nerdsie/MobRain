@@ -1,3 +1,19 @@
 name: MobRain
 main: me.NerdsWBNerds.MobRain.MobRain
 version: 1.1
+commands:
+    drops:
+      description: Remove mob drop in certain radius.
+      usage: /drops <radius>
+    mrain:
+      description: Create a creature storm.
+      usage: /mrain <amount> <mob> (radius) (player)
+    mr:
+      description: Same as mrain.
+      usage: /mr <amount> <mob> (radius) (player)
+    killmobs:
+      description: Same as mrain.
+      usage: /mr <amount> <mob> (radius) (player)
+    butcher:
+      description: Same as mrain.
+      usage: /mr <amount> <mob> (radius) (player)
