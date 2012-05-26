@@ -20,14 +20,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 	public static ArrayList<LivingEntity> spawned = new ArrayList<LivingEntity>();
-	public static boolean surviveFall = true;
+	public static boolean surviveFall = true, useOP = true;
 	public static Server server;
 	public static Logger log;
 	
 	public void onEnable(){
 		server = this.getServer();
 		log = this.getLogger();
-		
+
 		if(getConfig().contains("surviveFall")){
 			try{
 				surviveFall = getConfig().getBoolean("surviveFall");
@@ -45,6 +45,23 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 			this.saveConfig();
 		}
 		
+		if(getConfig().contains("opUse")){
+			try{
+				useOP = getConfig().getBoolean("opUse");
+				
+				if(getConfig().get("opUse") == null){
+					getConfig().set("opUse", true);
+					this.saveConfig();
+				}
+			}catch(Exception e){
+				getConfig().set("opUse", true);
+				this.saveConfig();
+			}
+		}else{
+			getConfig().set("opUse", true);
+			this.saveConfig();
+		}
+		
 		server.getPluginManager().registerEvents(this, this);
 	}
 
@@ -58,6 +75,11 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 			return false;
 		
 		if(cmd.getName().equalsIgnoreCase("drops")){
+			if(!hasPerm(player, "mobrain.drops")){
+				warn(player, "You don't have permission to do this.");
+				return true;
+			}
+			
 			try{
 				int rad = Integer.parseInt(args[0]);
 				int removed = 0;
@@ -78,6 +100,11 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 		}
 
 		if(cmd.getName().equalsIgnoreCase("butcher") || cmd.getName().equalsIgnoreCase("killmobs")){
+			if(!hasPerm(player, "mobrain.butcher")){
+				warn(player, "You don't have permission to do this.");
+				return true;
+			}
+			
 			try{
 				int rad = Integer.parseInt(args[0]);
 				int removed = 0;
@@ -98,6 +125,11 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 		}
 
 		if(cmd.getName().equalsIgnoreCase("mr") || cmd.getName().equalsIgnoreCase("mrain") && args.length==1){
+			if(!hasPerm(player, "mobrain.stop")){
+				warn(player, "You don't have permission to do this.");
+				return true;
+			}
+			
 			if(args[0].equalsIgnoreCase("stop")){
 				stopRain();
 				tell(player, ChatColor.GREEN + "All raining mobs now stopped.");
@@ -106,6 +138,11 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 		}
 		
 		if(cmd.getName().equalsIgnoreCase("mrain") || cmd.getName().equalsIgnoreCase("mr")){
+			if(!hasPerm(player, "mobrain.rain")){
+				warn(player, "You don't have permission to do this.");
+				return true;
+			}
+			
 			EntityType ent = Mobs.getMob(args[1]);
 			int amount = Integer.parseInt(args[0]);
 			int radius = 25;
@@ -174,5 +211,17 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 	
 	public void warn(Player p, String m){
 		p.sendMessage(ChatColor.RED + "[MobRain] " + m);
+	}
+	
+	public boolean hasPerm(Player p, String pe){
+		if(p.hasPermission(pe)){
+			return true;
+		}
+		
+		if(useOP && p.isOp()){
+			return true;
+		}
+		
+		return false;
 	}
 }

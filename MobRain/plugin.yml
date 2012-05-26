@@ -1,6 +1,6 @@
 name: MobRain
 main: me.NerdsWBNerds.MobRain.MobRain
-version: 2.0
+version: 2.1
 commands:
     drops:
       description: Remove mob drop in certain radius.
