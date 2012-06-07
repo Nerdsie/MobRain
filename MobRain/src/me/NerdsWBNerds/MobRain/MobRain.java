@@ -80,6 +80,11 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 				return true;
 			}
 			
+			if(args.length!=1){
+				warn(player, "Error: /drops <radius>");
+				return true;
+			}
+			
 			try{
 				int rad = Integer.parseInt(args[0]);
 				int removed = 0;
@@ -105,6 +110,11 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 				return true;
 			}
 			
+			if(args.length!=1){
+				warn(player, "Error: /butcher <radius>");
+				return true;
+			}
+			
 			try{
 				int rad = Integer.parseInt(args[0]);
 				int removed = 0;
@@ -124,17 +134,15 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 			}
 		}
 
-		if(cmd.getName().equalsIgnoreCase("mr") || cmd.getName().equalsIgnoreCase("mrain") && args.length==1){
+		if(cmd.getName().equalsIgnoreCase("mr") || cmd.getName().equalsIgnoreCase("mrain") && args[0].equalsIgnoreCase("stop")){
 			if(!hasPerm(player, "mobrain.stop")){
 				warn(player, "You don't have permission to do this.");
 				return true;
 			}
-			
-			if(args[0].equalsIgnoreCase("stop")){
-				stopRain();
-				tell(player, ChatColor.GREEN + "All raining mobs now stopped.");
-				return true;
-			}
+
+			stopRain();
+			tell(player, ChatColor.GREEN + "All raining mobs now stopped.");
+			return true;
 		}
 		
 		if(cmd.getName().equalsIgnoreCase("mrain") || cmd.getName().equalsIgnoreCase("mr")){
@@ -142,6 +150,12 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 				warn(player, "You don't have permission to do this.");
 				return true;
 			}
+
+			if(args.length>=2){
+				warn(player, "Error: /mr <amount> <mob> [radius] [player]");
+				return true;
+			}
+			
 			
 			EntityType ent = Mobs.getMob(args[1]);
 			int amount = Integer.parseInt(args[0]);
@@ -154,7 +168,7 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 					try{
 						target = server.getPlayer(args[2]);
 					}catch(Exception ee){
-						warn(player, "Error raining mobs, either your radius was not a number, or player was not found. /mrain <amount> <mob> (radius) (player)");
+						warn(player, "Error raining mobs, either your radius was not a number, or player was not found. /mrain <amount> <mob> [radius] [player]");
 						return true;
 					}
 				}
@@ -169,7 +183,7 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 						radius = Integer.parseInt(args[3]);
 						target = server.getPlayer(args[2]);
 					}catch(Exception ee){
-						warn(player, "Error raining mobs, either your radius was not a number, or player was not found. /mrain <amount> <mob> (radius) (player)");
+						warn(player, "Error raining mobs, either your radius was not a number, or player was not found. /mrain <amount> <mob> [radius] [player]");
 						return true;
 					}
 				}
