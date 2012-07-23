@@ -71,10 +71,10 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 		
 		Player player = (Player) sender;
 
-		if(!player.isOp())
-			return false;
-		
 		if(cmd.getName().equalsIgnoreCase("drops")){
+			if(args.length!=1)
+				return false;
+			
 			if(!hasPerm(player, "mobrain.drops")){
 				warn(player, "You don't have permission to do this.");
 				return true;
@@ -104,7 +104,10 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 			}
 		}
 
-		if(cmd.getName().equalsIgnoreCase("butcher") || cmd.getName().equalsIgnoreCase("killmobs")){
+		if(cmd.getName().equalsIgnoreCase("killmobs")){
+			if(args.length!=1)
+				return false;
+			
 			if(!hasPerm(player, "mobrain.butcher")){
 				warn(player, "You don't have permission to do this.");
 				return true;
@@ -134,65 +137,66 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 			}
 		}
 
-		if(cmd.getName().equalsIgnoreCase("mr") || cmd.getName().equalsIgnoreCase("mrain") && args[0].equalsIgnoreCase("stop")){
-			if(!hasPerm(player, "mobrain.stop")){
-				warn(player, "You don't have permission to do this.");
+		if(cmd.getName().equalsIgnoreCase("mrain")){
+			if(args.length < 1 || args.length > 5)
+				return false;
+			
+			if(args[0].equalsIgnoreCase("stop")){
+				if(!hasPerm(player, "mobrain.stop")){
+					warn(player, "You don't have permission to do this.");
+					return true;
+				}
+	
+				stopRain();
+				tell(player, ChatColor.GREEN + "All raining mobs now stopped.");
+				return true;
+			}else{
+				if(!hasPerm(player, "mobrain.rain")){
+					warn(player, "You don't have permission to do this.");
+					return true;
+				}
+
+				if(args.length < 2)
+					return false;
+				
+				EntityType ent = Mobs.getMob(args[1]);
+				int amount = Integer.parseInt(args[0]);
+				int radius = 25;
+				Player target = player;
+				if((args.length==3)){
+					try{
+						radius = Integer.parseInt(args[2]);
+					}catch(Exception e){
+						try{
+							target = server.getPlayer(args[2]);
+						}catch(Exception ee){
+							warn(player, "Error raining mobs, either your radius was not a number, or player was not found. /mrain <amount> <mob> [radius] [player]");
+							return true;
+						}
+					}
+				}
+				
+				if(args.length==4){
+					try{
+						radius = Integer.parseInt(args[2]);
+						target = server.getPlayer(args[3]);
+					}catch(Exception e){
+						try{
+							radius = Integer.parseInt(args[3]);
+							target = server.getPlayer(args[2]);
+						}catch(Exception ee){
+							warn(player, "Error raining mobs, either your radius was not a number, or player was not found. /mrain <amount> <mob> [radius] [player]");
+							return true;
+						}
+					}
+				}
+				
+				tell(player, ChatColor.GREEN + "Now raining " + ChatColor.AQUA + amount + " " + ent.getName() + "(s).");
+				startRain(ent, amount, radius, target);
 				return true;
 			}
-
-			stopRain();
-			tell(player, ChatColor.GREEN + "All raining mobs now stopped.");
-			return true;
 		}
 		
-		if(cmd.getName().equalsIgnoreCase("mrain") || cmd.getName().equalsIgnoreCase("mr")){
-			if(!hasPerm(player, "mobrain.rain")){
-				warn(player, "You don't have permission to do this.");
-				return true;
-			}
-
-			if(args.length>=2){
-				warn(player, "Error: /mr <amount> <mob> [radius] [player]");
-				return true;
-			}
-			
-			
-			EntityType ent = Mobs.getMob(args[1]);
-			int amount = Integer.parseInt(args[0]);
-			int radius = 25;
-			Player target = player;
-			if((args.length==3)){
-				try{
-					radius = Integer.parseInt(args[2]);
-				}catch(Exception e){
-					try{
-						target = server.getPlayer(args[2]);
-					}catch(Exception ee){
-						warn(player, "Error raining mobs, either your radius was not a number, or player was not found. /mrain <amount> <mob> [radius] [player]");
-						return true;
-					}
-				}
-			}
-			
-			if(args.length==4){
-				try{
-					radius = Integer.parseInt(args[2]);
-					target = server.getPlayer(args[3]);
-				}catch(Exception e){
-					try{
-						radius = Integer.parseInt(args[3]);
-						target = server.getPlayer(args[2]);
-					}catch(Exception ee){
-						warn(player, "Error raining mobs, either your radius was not a number, or player was not found. /mrain <amount> <mob> [radius] [player]");
-						return true;
-					}
-				}
-			}
-			
-			tell(player, ChatColor.GREEN + "Now raining " + ChatColor.AQUA + amount + " " + ent.getName() + "'s");
-			startRain(ent, amount, radius, target);
-			return true;
-		}
 		return false;
 	}
 	
