@@ -1,6 +1,6 @@
 name: MobRain
 main: me.NerdsWBNerds.MobRain.MobRain
-version: 2.2.1
+version: 2.2.2
 commands:
     drops:
       description: Remove mob drop in certain radius.
@@ -12,4 +12,4 @@ commands:
     killmobs:
       description: Kill mobs in specific radius.
       usage: /<command> <radius>
-      aliases: [mrbutcher] [butcher]
+      aliases: [mrbutcher, butcher]
