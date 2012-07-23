@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 	public static ArrayList<LivingEntity> spawned = new ArrayList<LivingEntity>();
-	public static boolean surviveFall = true, useOP = true;
+	public static boolean surviveFall = true;
 	public static Server server;
 	public static Logger log;
 	
@@ -45,23 +45,6 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 			this.saveConfig();
 		}
 		
-		if(getConfig().contains("opUse")){
-			try{
-				useOP = getConfig().getBoolean("opUse");
-				
-				if(getConfig().get("opUse") == null){
-					getConfig().set("opUse", true);
-					this.saveConfig();
-				}
-			}catch(Exception e){
-				getConfig().set("opUse", true);
-				this.saveConfig();
-			}
-		}else{
-			getConfig().set("opUse", true);
-			this.saveConfig();
-		}
-		
 		server.getPluginManager().registerEvents(this, this);
 	}
 
@@ -74,8 +57,8 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 		if(cmd.getName().equalsIgnoreCase("drops")){
 			if(args.length!=1)
 				return false;
-			
-			if(!hasPerm(player, "mobrain.drops")){
+
+			if(!player.hasPermission("mobrain.drops")){
 				warn(player, "You don't have permission to do this.");
 				return true;
 			}
@@ -107,8 +90,8 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 		if(cmd.getName().equalsIgnoreCase("killmobs")){
 			if(args.length!=1)
 				return false;
-			
-			if(!hasPerm(player, "mobrain.butcher")){
+
+			if(!player.hasPermission("mobrain.butcher")){
 				warn(player, "You don't have permission to do this.");
 				return true;
 			}
@@ -142,7 +125,7 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 				return false;
 			
 			if(args[0].equalsIgnoreCase("stop")){
-				if(!hasPerm(player, "mobrain.stop")){
+				if(!player.hasPermission("mobrain.stop")){
 					warn(player, "You don't have permission to do this.");
 					return true;
 				}
@@ -151,7 +134,7 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 				tell(player, ChatColor.GREEN + "All raining mobs now stopped.");
 				return true;
 			}else{
-				if(!hasPerm(player, "mobrain.rain")){
+				if(!player.hasPermission("mobrain.rain")){
 					warn(player, "You don't have permission to do this.");
 					return true;
 				}
@@ -229,17 +212,5 @@ public class MobRain extends JavaPlugin implements CommandExecutor, Listener{
 	
 	public void warn(Player p, String m){
 		p.sendMessage(ChatColor.RED + "[MobRain] " + m);
-	}
-	
-	public boolean hasPerm(Player p, String pe){
-		if(p.hasPermission(pe)){
-			return true;
-		}
-		
-		if(useOP && p.isOp()){
-			return true;
-		}
-		
-		return false;
 	}
 }
